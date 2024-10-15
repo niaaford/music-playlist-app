@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nia's Playlist</title>
+    <link rel="stylesheet" href="/Playlist/style.css">
+   
+</head>
+<body>
+    <div id="playlist-container">
+        <div id="img-container"></div> 
+        <div id="song-container">
+            <h6 id="song-title">HOURS IN SILENCE</h6>
+            <h5 id="artist-name">DRAKE</h5>
+            <div class="progress-container">
+                <span id="current-time">0:00</span>
+                <input type="range" id="progress-bar" min="0" max="100" value="0">
+                <span id="song-duration">5:30</span>
+            </div>
+            <div class="controls">
+                <button id="play-pause">⏪</button> 
+                <button id="prev-song">⏯</button>
+                <button id="next-song">⏩</button> 
+            </div>
+            <div class="volume-container">
+                <label for="volume-bar">🔊</label>
+                <input type="range" id="volume-bar" min="0" max="100" value="50">
+            </div>
+           
+        </div>
+    </div>
+
+    <script>
+        const songs = [
+            {
+                title: 'HOURS IN SILENCE',
+                artist: 'DRAKE',
+                img: 'img-hours-in-silence.png', 
+                src: 'hours-in-silence.mp3',
+                duration: '6:39'
+            },
+            {
+                title: 'SWEETERMAN',
+                artist: 'DRAKE',
+                img: 'img-sweeterman.png',
+                src: 'sweeterman.mp3',
+                duration: '4:35'
+            },
+            {
+                title: 'MEMBERS ONLY',
+                artist: 'DRAKE',
+                img: 'img-hours-in-silence.png',
+                src: 'members-only.mp3',
+                duration: '4:37'
+            },
+            {
+                title: 'MEMBERS ONLY',
+                artist: 'DRAKE',
+                img: 'img-hours-in-silence.png',
+                src: 'members-only.mp3',
+                duration: '4:37'
+            },
+            {
+                title: '#',
+                artist: '#',
+                img: '#',
+                src: 'members-only.mp3',
+                duration: '#'
+            },
+           
+        ];
+
+        let currentSongIndex = 0;
+        const audio = new Audio(songs[currentSongIndex].src);
+
+        const playPauseButton = document.getElementById('play-pause');
+        const nextButton = document.getElementById('next-song');
+        const prevButton = document.getElementById('prev-song');
+
+        const progressBar = document.getElementById('progress-bar');
+        const volumeBar = document.getElementById('volume-bar');
+        const currentTimeEl = document.getElementById('current-time');
+        const songDurationEl = document.getElementById('song-duration');
+
+        const imgContainer = document.getElementById('img-container');
+
+        const songTitleEl = document.getElementById('song-title');
+        const artistNameEl = document.getElementById('artist-name'); 
+
+        
+        function loadSong(index) {
+            audio.src = songs[index].src;
+            songTitleEl.textContent = songs[index].title;
+            artistNameEl.textContent = songs[index].artist;
+            imgContainer.style.backgroundImage = `url(${songs[index].img})`;
+
+            songDurationEl.textContent = songs[index].duration;
+        }
+
+
+        function togglePlayPause() {
+            if (audio.paused) {
+                audio.play();
+                
+            } else {
+                audio.pause();
+                
+            }
+        }
+
+        
+        function nextSong() {
+            currentSongIndex = (currentSongIndex + 1) % songs.length;
+            loadSong(currentSongIndex);
+            audio.play();
+        }
+
+        
+        function prevSong() {
+            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+            loadSong(currentSongIndex);
+            audio.play();
+        }
+
+        
+        audio.addEventListener('timeupdate', () => {
+            const progressPercent = (audio.currentTime / audio.duration) * 100;
+            progressBar.value = progressPercent;
+            currentTimeEl.textContent = formatTime(audio.currentTime);
+        });
+
+        
+        progressBar.addEventListener('input', () => {
+            const seekTime = (progressBar.value / 100) * audio.duration;
+            audio.currentTime = seekTime;
+        });
+
+        
+        volumeBar.addEventListener('input', () => {
+            audio.volume = volumeBar.value / 100;
+        });
+
+       
+        function formatTime(seconds) {
+            let minutes = Math.floor(seconds / 60);
+            let remainingSeconds = Math.floor(seconds % 60);
+            if (remainingSeconds < 10) remainingSeconds = '0' + remainingSeconds;
+            return `${minutes}:${remainingSeconds}`;
+        }
+
+        
+       prevButton.addEventListener('click', togglePlayPause);
+        nextButton.addEventListener('click', nextSong);
+        playPauseButton.addEventListener('click', prevSong);
+
+       
+        loadSong(currentSongIndex);
+    </script>
+</body>
+</html>
